@@ -1,11 +1,12 @@
 #ifndef XTEA_XTEA_RTL_H
 #define XTEA_XTEA_RTL_H
 
+//#define DEBUG
+
 #include <systemc.h>
 
 SC_MODULE(XTEA_RTL) {
-  sc_in_clk clk;   // The clock signal
-  sc_in<bool> rst; // The reset signal
+  sc_in_clk clk; // The clock signal
 
   sc_in<sc_uint<64>> data_input;   // 64-bit input port
   sc_out<sc_uint<64>> data_output; // 64-bit output port
@@ -21,20 +22,26 @@ SC_MODULE(XTEA_RTL) {
     BUSY_DEC
   } STATES; // Possible states of the FSM
 
-  sc_signal<STATES> STATUS, NEXT_STATUS;
-  sc_signal<sc_uint<32>> key[4];
-  sc_signal<sc_uint<32>> text[2];
+  STATES STATUS, NEXT_STATUS;
+  sc_uint<32> key[4];
+  sc_uint<32> text[2];
+
+  int key_index = 0;
 
   void fsm();
 
   void datapath();
 
+  void xtea(sc_uint<32> word0, sc_uint<32> word1, sc_uint<32> key0,
+            sc_uint<32> key1, sc_uint<32> key2, sc_uint<32> key3, bool mode,
+            sc_uint<32> *result0, sc_uint<32> *result1);
+
   SC_CTOR(XTEA_RTL) {
     SC_METHOD(datapath);
-    sensitive << clk.pos() << rst.pos();
+    sensitive << clk.pos();
 
     SC_METHOD(fsm);
-    sensitive << STATUS << load_key << encrypt << decrypt;
+    sensitive << load_key << encrypt << decrypt;
   }
 };
 

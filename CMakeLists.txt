@@ -11,5 +11,5 @@ include_directories(${SYSTEMC_HOME}/include)
 find_library(systemc systemc ${SYSTEMC_HOME}/lib-linux64)
 link_directories(${SYSTEMC_HOME}/lib-linux64)
 
-add_executable(XTEA src/main.cpp src/XTEA_RTL.cpp)
+add_executable(XTEA src/XTEA_testbench.cpp src/XTEA_RTL.cpp)
 target_link_libraries(XTEA systemc)
