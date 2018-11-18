@@ -6,53 +6,29 @@ void XTEA_RTL::fsm() {
   NEXT_STATUS = STATUS;
   switch (STATUS) {
     case IDLE:
-#ifdef DEBUG
-      cout << "@" << sc_time_stamp() << " Current status: IDLE" << endl;
-#endif
       if (load_key.read() && !encrypt.read() && !decrypt.read()) {
         NEXT_STATUS = BUSY_KEY;
-#ifdef DEBUG
-        cout << "@" << sc_time_stamp() << " Next status: BUSY_KEY" << endl;
-#endif
       } else if (encrypt.read() && !load_key.read() && !decrypt.read()) {
         NEXT_STATUS = BUSY_ENC;
-#ifdef DEBUG
-        cout << "@" << sc_time_stamp() << " Next status: BUSY_ENC" << endl;
-#endif
       } else if (decrypt.read() && !load_key.read() && !encrypt.read()) {
         NEXT_STATUS = BUSY_DEC;
-#ifdef DEBUG
-        cout << "@" << sc_time_stamp() << " Next status: BUSY_DEC" << endl;
-#endif
       } else {
         NEXT_STATUS = IDLE;
-#ifdef DEBUG
-        cout << "@" << sc_time_stamp() << " Next status: IDLE" << endl;
-#endif
       }
       break;
     case BUSY_KEY:
-#ifdef DEBUG
-      cout << "@" << sc_time_stamp() << " Current status: BUSY_KEY" << endl;
-#endif
       if (load_key.read())
         NEXT_STATUS = BUSY_KEY;
       else
         NEXT_STATUS = IDLE;
       break;
     case BUSY_ENC:
-#ifdef DEBUG
-      cout << "@" << sc_time_stamp() << " Current status: BUSY_ENC" << endl;
-#endif
       if (encrypt.read())
         NEXT_STATUS = BUSY_ENC;
       else
         NEXT_STATUS = IDLE;
       break;
     case BUSY_DEC:
-#ifdef DEBUG
-      cout << "@" << sc_time_stamp() << " Current status: BUSY_DEC" << endl;
-#endif
       if (decrypt.read())
         NEXT_STATUS = BUSY_DEC;
       else
@@ -66,31 +42,19 @@ void XTEA_RTL::datapath() {
 
   switch (STATUS) {
     case IDLE:
-#ifdef DEBUG
-      cout << "@" << sc_time_stamp() << " Datapath status: IDLE" << endl;
-#endif
       key_index = 0;
       data_output.write(0);
       break;
     case BUSY_KEY:
-#ifdef DEBUG
-      cout << "@" << sc_time_stamp() << " Datapath status: BUSY_KEY" << endl;
-#endif
       key[key_index++] = data_input.read().range(31, 0);
       key[key_index++] = data_input.read().range(63, 32);
       break;
     case BUSY_ENC:
-#ifdef DEBUG
-      cout << "@" << sc_time_stamp() << " Datapath status: BUSY_ENC" << endl;
-#endif
       xtea(data_input.read().range(63, 32), data_input.read().range(31, 0),
            key[0], key[1], key[2], key[3], false, &text[0], &text[1]);
       data_output.write((text[0], text[1]));
       break;
     case BUSY_DEC:
-#ifdef DEBUG
-      cout << "@" << sc_time_stamp() << " Datapath status: BUSY_DEC" << endl;
-#endif
       xtea(data_input.read().range(63, 32), data_input.read().range(31, 0),
            key[0], key[1], key[2], key[3], true, &text[0], &text[1]);
       data_output.write((text[0], text[1]));

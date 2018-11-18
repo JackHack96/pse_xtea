@@ -32,11 +32,6 @@ int sc_main(int argc, char *argv[]) {
   sc_uint<64> text = 0;
 
   /// SIMULATION START HERE
-#ifdef DEBUG
-  cout << "#########################################################" << endl;
-  cout << "@" << sc_time_stamp() << " Starting simulation\n" << endl;
-#endif
-
   // Starting the circuit without signals
   load_key = false;
   encrypt  = false;
@@ -49,10 +44,6 @@ int sc_main(int argc, char *argv[]) {
   }
 
   // Load the key
-#ifdef DEBUG
-  cout << "--------------------------------------------------------" << endl;
-  cout << "@" << sc_time_stamp() << " Starting key input\n" << endl;
-#endif
   clk      = false;
   load_key = true;
   sc_start(1, SC_NS);
@@ -72,11 +63,6 @@ int sc_main(int argc, char *argv[]) {
   data_input.write(text);
   sc_start(1, SC_NS);
 
-#ifdef DEBUG
-  cout << "--------------------------------------------------------" << endl;
-  cout << "@" << sc_time_stamp() << " Stopping key input\n" << endl;
-#endif
-
   clk      = false;
   load_key = false;
   sc_start(1, SC_NS);
@@ -89,10 +75,6 @@ int sc_main(int argc, char *argv[]) {
   sc_start(1, SC_NS);
 
   // Load data to be encrypted
-#ifdef DEBUG
-  cout << "--------------------------------------------------------" << endl;
-  cout << "@" << sc_time_stamp() << " Starting encryption\n" << endl;
-#endif
   clk = true;
   text.range(31, 0)  = 0x12345678;
   text.range(63, 31) = 0x9abcdeff;
@@ -100,10 +82,6 @@ int sc_main(int argc, char *argv[]) {
   cout << "Original text: " << text << endl;
   sc_start(1, SC_NS);
 
-#ifdef DEBUG
-  cout << "--------------------------------------------------------" << endl;
-  cout << "@" << sc_time_stamp() << " Stopping encryption\n" << endl;
-#endif
   clk     = false;
   encrypt = false;
   text    = data_output.read();
@@ -118,20 +96,13 @@ int sc_main(int argc, char *argv[]) {
   sc_start(1, SC_NS);
 
   // Load and decrypt data
-#ifdef DEBUG
-  cout << "--------------------------------------------------------" << endl;
-  cout << "@" << sc_time_stamp() << " Starting decryption\n" << endl;
-#endif
   clk = true;
   text.range(31, 0)  = text.range(31, 0);
   text.range(63, 31) = text.range(63, 31);
   data_input.write(text);
   sc_start(1, SC_NS);
 
-#ifdef DEBUG
-  cout << "--------------------------------------------------------" << endl;
-  cout << "@" << sc_time_stamp() << " Stopping decryption\n" << endl;
-#endif
+
   clk     = false;
   encrypt = false;
   text    = data_output.read();
@@ -145,10 +116,6 @@ int sc_main(int argc, char *argv[]) {
   clk = false;
   sc_start(1, SC_NS);
 
-#ifdef DEBUG
-  cout << "@" << sc_time_stamp() << " Terminating simulation\n" << endl;
-  cout << "#########################################################" << endl;
-#endif
   sc_close_vcd_trace_file(fp);
 
   return 0;
