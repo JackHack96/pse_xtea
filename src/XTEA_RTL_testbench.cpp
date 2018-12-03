@@ -1,7 +1,7 @@
-
-#include <XTEA_RTL_testbench.h>
-
 #include "XTEA_RTL_testbench.h"
+#include <fstream>
+#include <sstream>
+#include <string>
 
 XTEA_RTL_testbench::XTEA_RTL_testbench(sc_module_name name) : sc_module(name) {
   SC_THREAD(run);
@@ -10,12 +10,7 @@ XTEA_RTL_testbench::XTEA_RTL_testbench(sc_module_name name) : sc_module(name) {
 
 void XTEA_RTL_testbench::run() {
   sc_uint<32> text[2] = {0x12345678, 0x9abcdeff};
-  sc_uint<32> key[4]={0x6a1d78c8,0x8c86d67f,0x2a65bfbe,0xb4bd6e46};
-
-  rst.write(false);
-  input_ready.write(false);
-
-  wait();
+  sc_uint<32> key[4] = {0x6a1d78c8, 0x8c86d67f, 0x2a65bfbe, 0xb4bd6e46};
 
   /// Encrypt mode
   mode.write(false);

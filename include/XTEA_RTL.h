@@ -18,8 +18,7 @@ SC_MODULE(XTEA_RTL) {
 
   typedef enum {
     IDLE,
-    BUSY_ENC,
-    BUSY_DEC
+    BUSY
   } STATES; // Possible states of the FSM
 
   sc_signal<STATES> STATUS, NEXT_STATUS; // Signals for representing states

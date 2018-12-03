@@ -6,22 +6,13 @@ void XTEA_RTL::fsm() {
   switch (STATUS) {
   case IDLE:
     if (input_ready.read()) {
-      if (mode.read() == 0)
-        NEXT_STATUS = BUSY_ENC;
-      else
-        NEXT_STATUS = BUSY_DEC;
+      NEXT_STATUS = BUSY;
     } else
       NEXT_STATUS = IDLE;
     break;
-  case BUSY_ENC:
+  case BUSY:
     if (input_ready.read())
-      NEXT_STATUS = BUSY_ENC;
-    else
-      NEXT_STATUS = IDLE;
-    break;
-  case BUSY_DEC:
-    if (input_ready.read())
-      NEXT_STATUS = BUSY_DEC;
+      NEXT_STATUS = BUSY;
     else
       NEXT_STATUS = IDLE;
     break;
@@ -36,28 +27,14 @@ void XTEA_RTL::datapath() {
     sc_uint<32> tmp[2];
 
     switch (STATUS) {
-    case IDLE:
-      break;
-    case BUSY_ENC:
-      key[0] = key_input[0].read();
+    case IDLE:break;
+    case BUSY:key[0] = key_input[0].read();
       key[1] = key_input[1].read();
       key[2] = key_input[2].read();
       key[3] = key_input[3].read();
       text[0] = text_input[0].read();
       text[1] = text_input[1].read();
-      xtea(text[0], text[1], key[0], key[1], key[2], key[3], false, &tmp[0],
-           &tmp[1]);
-      data_output[0].write(tmp[0]);
-      data_output[1].write(tmp[1]);
-      break;
-    case BUSY_DEC:
-      key[0] = key_input[0].read();
-      key[1] = key_input[1].read();
-      key[2] = key_input[2].read();
-      key[3] = key_input[3].read();
-      text[0] = text_input[0].read();
-      text[1] = text_input[1].read();
-      xtea(text[0], text[1], key[0], key[1], key[2], key[3], true, &tmp[0],
+      xtea(text[0], text[1], key[0], key[1], key[2], key[3], mode, &tmp[0],
            &tmp[1]);
       data_output[0].write(tmp[0]);
       data_output[1].write(tmp[1]);
