@@ -1,4 +1,4 @@
-#include "XTEA_RTL_testbench.h"
+#include "RTL/XTEA_RTL_testbench.h"
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -15,7 +15,7 @@ void XTEA_RTL_testbench::run() {
   /// Encrypt mode
   mode.write(false);
 
-  cout << "Original text: " << hex << text[0] << "," << hex << text[1] << "\n";
+  cout << "Original tmp_result: " << hex << text[0] << "," << hex << text[1] << "\n";
 
   key_input[0].write(key[0]);
   key_input[1].write(key[1]);
@@ -31,7 +31,7 @@ void XTEA_RTL_testbench::run() {
   input_ready.write(false);
   wait();
 
-  cout << "Encrypted text: " << hex << text[0] << "," << hex << text[1] << "\n";
+  cout << "Encrypted tmp_result: " << hex << text[0] << "," << hex << text[1] << "\n";
 
   /// Decrypt mode
   mode.write(true);
@@ -50,7 +50,7 @@ void XTEA_RTL_testbench::run() {
   text[1] = data_output[1].read();
   input_ready.write(false);
 
-  cout << "Decrypted text: " << hex << text[0] << "," << hex << text[1] << "\n";
+  cout << "Decrypted tmp_result: " << hex << text[0] << "," << hex << text[1] << "\n";
 
   /// End simulation
   sc_stop();

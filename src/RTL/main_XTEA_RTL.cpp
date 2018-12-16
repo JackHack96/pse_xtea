@@ -1,5 +1,5 @@
-#include "XTEA_RTL.h"
-#include "XTEA_RTL_testbench.h"
+#include "RTL/XTEA_RTL.h"
+#include "RTL/XTEA_RTL_testbench.h"
 
 int sc_main(int argc, char **argv) {
   sc_clock clk;

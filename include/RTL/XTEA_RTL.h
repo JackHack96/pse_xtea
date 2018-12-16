@@ -23,7 +23,7 @@ SC_MODULE(XTEA_RTL) {
 
   sc_signal<STATES> STATUS, NEXT_STATUS; // Signals for representing states
   sc_signal<sc_uint<32>> key[4];         // Signal for key
-  sc_signal<sc_uint<32>> text[2];        // Signal for text
+  sc_signal<sc_uint<32>> text[2];        // Signal for tmp_result
 
   void fsm();
 
