@@ -16,3 +16,7 @@ target_link_libraries(XTEA_RTL systemc)
 # Generate TLM UT binary
 add_executable(XTEA_TLM_UT src/TLM_UT/XTEA_TLM_UT.cpp src/TLM_UT/XTEA_TLM_UT_testbench.cpp src/TLM_UT/main_XTEA_TLM_UT.cpp)
 target_link_libraries(XTEA_TLM_UT systemc)
+
+# Generate TLM UT binary
+add_executable(XTEA_TLM_LT src/TLM_LT/XTEA_TLM_LT.cpp src/TLM_LT/XTEA_TLM_LT_testbench.cpp src/TLM_LT/main_XTEA_TLM_LT.cpp)
+target_link_libraries(XTEA_TLM_LT systemc)

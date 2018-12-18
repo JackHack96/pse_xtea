@@ -1,18 +1,18 @@
-#include <TLM_UT/XTEA_TLM_UT.h>
-#include "TLM_UT/XTEA_TLM_UT_testbench.h"
+#include <TLM_LT/XTEA_TLM_LT.h>
+#include "TLM_LT/XTEA_TLM_LT_testbench.h"
 
-void XTEA_TLM_UT_testbench::invalidate_direct_mem_ptr(uint64 start_range, uint64 end_range) {
+void XTEA_TLM_LT_testbench::invalidate_direct_mem_ptr(uint64 start_range, uint64 end_range) {
 
 }
 
-tlm::tlm_sync_enum XTEA_TLM_UT_testbench::nb_transport_bw(tlm::tlm_generic_payload &trans,
+tlm::tlm_sync_enum XTEA_TLM_LT_testbench::nb_transport_bw(tlm::tlm_generic_payload &trans,
                                                           tlm::tlm_phase &phase,
                                                           sc_time &t) {
   return tlm::TLM_COMPLETED;
 }
 
-void XTEA_TLM_UT_testbench::run() {
-  sc_time local_time;
+void XTEA_TLM_LT_testbench::run() {
+  sc_time local_time = m_qk.get_local_time();
   // First transaction (initialization)
   iostruct xtea_packet;
   tlm::tlm_generic_payload payload;
@@ -34,6 +34,8 @@ void XTEA_TLM_UT_testbench::run() {
   payload.set_address(0);
   payload.set_write();
 
+  local_time = m_qk.get_local_time();
+
   // start write transaction
   initiator_socket->b_transport(payload, local_time);
 
@@ -42,9 +44,11 @@ void XTEA_TLM_UT_testbench::run() {
 
   initiator_socket->b_transport(payload, local_time);
   if (payload.get_response_status() == tlm::TLM_OK_RESPONSE) {
-    cout << "\tEncrypted text:\t" << hex <<  xtea_packet.result[0] << "," << hex <<  xtea_packet.result[1] << endl;
+    cout << "\tEncrypted text:\t" << hex << xtea_packet.result[0] << "," << hex << xtea_packet.result[1] << endl;
     cout << endl;
   }
+  cout << "Time: " << sc_time_stamp() << " + " << local_time << endl;
+  m_qk.set(local_time);
 
   // Set to decrypt mode
   xtea_packet.mode = true;
@@ -63,14 +67,21 @@ void XTEA_TLM_UT_testbench::run() {
 
   initiator_socket->b_transport(payload, local_time);
   if (payload.get_response_status() == tlm::TLM_OK_RESPONSE) {
-    cout << "\tDecrypted text:\t" << hex <<  xtea_packet.result[0] << "," << hex <<  xtea_packet.result[1] << endl;
+    cout << "\tDecrypted text:\t" << hex << xtea_packet.result[0] << "," << hex << xtea_packet.result[1] << endl;
     cout << endl;
   }
+  cout << "Time: " << sc_time_stamp() << " + " << local_time << endl;
+  m_qk.set(local_time);
 
+  if (m_qk.need_sync()) {
+    cout << "SYNCHRONIZING" << endl;
+    m_qk.sync();
+    cout << "#####################" << endl;
+  }
   sc_stop();
 }
 
-XTEA_TLM_UT_testbench::XTEA_TLM_UT_testbench(sc_module_name name) : sc_module(name) {
+XTEA_TLM_LT_testbench::XTEA_TLM_LT_testbench(sc_module_name name) : sc_module(name) {
   initiator_socket(*this);
 
   SC_THREAD(run);

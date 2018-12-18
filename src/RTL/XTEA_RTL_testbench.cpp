@@ -15,7 +15,7 @@ void XTEA_RTL_testbench::run() {
   /// Encrypt mode
   mode.write(false);
 
-  cout << "Original tmp_result: " << hex << text[0] << "," << hex << text[1] << "\n";
+  cout << "Original text: " << hex << text[0] << "," << hex << text[1] << "\n";
 
   key_input[0].write(key[0]);
   key_input[1].write(key[1]);
@@ -31,7 +31,7 @@ void XTEA_RTL_testbench::run() {
   input_ready.write(false);
   wait();
 
-  cout << "Encrypted tmp_result: " << hex << text[0] << "," << hex << text[1] << "\n";
+  cout << "Encrypted text: " << hex << text[0] << "," << hex << text[1] << "\n";
 
   /// Decrypt mode
   mode.write(true);
